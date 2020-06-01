@@ -1,0 +1,97 @@
+cache:
+  paths:
+    - node_modules/
+
+image: node:10.14.1
+
+stages:
+  - build
+  - test
+  - deploy
+
+.build_template: &build_template
+  stage: build
+  tags: [docker]
+  except:
+    - triggers
+  script:
+    - npm i
+    - npm run esreport
+    - npm run build
+  artifacts:
+    paths:
+      - build/
+      - coverage/
+
+.deploy_template: &deploy_template
+  image: instrumentisto/rsync-ssh
+  stage: deploy
+  tags: [docker]
+  before_script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_dsa
+    - chmod 600 ~/.ssh/id_dsa
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\tPubkeyAuthentication yes\n\tIdentityFile ~/.ssh/id_dsa\n\tUser poweruser\n" > ~/.ssh/config
+
+build:
+  variables:
+    ENV_PATH: .env.staging
+  <<: *build_template
+  only:
+    - staging
+    - /^feature.*$/
+
+build_demo:
+  variables:
+    ENV_PATH: .env.demo
+  <<: *build_template
+  only:
+    - develop
+    - /^release.*$/
+
+build_prod:
+  variables:
+    ENV_PATH: .env.production
+  <<: *build_template
+  only:
+    - master
+    - tags
+  artifacts:
+    expire_in: 10 yrs
+    paths:
+      - build/
+
+# static code analysis
+sonarqube-check:
+  stage: test
+  tags: [docker]
+  image: docker:latest
+  script:
+    - ls -la
+    - pwd
+    - docker run -e SONAR_TOKEN=$SONAR_TOKEN -v "$(pwd):/usr/src" sonarsource/sonar-scanner-cli:latest
+  services:
+    - docker:dind
+  allow_failure: true
+  only:
+    - /^feature.*$/
+    - develop
+    - master
+
+deploy_staging:
+  <<: *deploy_template
+  only:
+    - staging
+  script:
+    - rsync -rav --delete build/ poweruser@dmh-api-1.staging.dmh.restr.im:/opt/household/key_admin/tmp/public/bundle/key_admin
+
+deploy_demo:
+  <<: *deploy_template
+  only:
+    - develop
+    - /^release.*$/
+  script:
+    - rsync -rav --delete build/ poweruser@web-front-1.demo.vc.restr.im:/rest/u/apps/vcfront_unicorn/current/public/bundle/key_admin/
+    - ssh poweruser@web-front-1.demo.vc.restr.im "sudo sv -w 300 restart vcfront_unicorn"

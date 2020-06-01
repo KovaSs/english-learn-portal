@@ -1,0 +1,11 @@
+.idea/
+node_modules/
+bundle/
+build
+.DS_Store
+
+.env
+
+!.npmrc
+!.env.production
+!.env.demo

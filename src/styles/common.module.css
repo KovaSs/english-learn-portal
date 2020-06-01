@@ -1,0 +1,84 @@
+
+.appContainer {
+  margin: 24px 0;
+  font-family: "Rostelecom Basis", "Open Sans", sans-serif;
+  position: relative;
+}
+
+.devContainer {
+  max-width: 1400px;
+  margin: 24px auto;
+  padding: 0 15px;
+}
+
+/* Стили всплывающей при наведении подсказки */
+div[role="tooltip"] .tooltip {
+  font-family: "Rostelecom Basis";
+  padding: 7px;
+  text-align: center;
+  max-width: 100px;
+  font-size: 13px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+  background: #272F3D;
+  white-space: pre-wrap;
+}
+
+div[role="tooltip"] .tooltip.tooltipMedium {
+  max-width: 200px;
+}
+
+div[role="tooltip"] .tooltip span {
+  color: #272F3D;
+}
+
+/* Стили основного лоадера страницы*/
+.loadingOverlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  top: 0;
+  background: #00000017;
+  z-index: 2;
+}
+
+.loadingOverlay svg {
+  color: #8348FC;
+}
+
+.loader {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+}
+
+/* Custom Grid System */
+.inputContainer {
+  width: 492px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* col12 - ширинa контейнера 492px */
+.inputContainer .col8 {
+  width: 325px;
+}
+
+.inputContainer .col6 {
+  width: 238px;
+}
+
+.inputContainer .col3 {
+  width: 119px;
+}
+
+.inputContainer .col4 {
+  width: 150px;
+}
+
+.inputSmContainer .colSm6 {
+  width: 100%;
+  max-width: 492px;
+}

@@ -1,0 +1,8 @@
+{
+  "extends": "@packages/eslint-config-prettier-rtkit/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./"
+  },
+  "include": ["src"],
+  "typeRoots": ["src/constants/defines.d.ts"]
+}

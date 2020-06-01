@@ -1,0 +1,7 @@
+{
+  "version": "VERSION",
+  "sentry": {
+    "dsn": "SENTRY_DSN",
+    "enabled": "CRASH_ANALYTICS_SEND"
+  }
+}
